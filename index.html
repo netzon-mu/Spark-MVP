@@ -250,6 +250,9 @@ table.t tr:hover td{background:#FAFBFC}
     </div>
     <div class="topbar-right">
       <div class="api-pill"><div class="api-dot" id="apiDot"></div><span id="apiLabel">Ready</span></div>
+      <div class="api-pill" style="cursor:pointer" onclick="loadFromSharePoint()" title="Refresh from SharePoint">
+        <span style="font-size:11px">⟳ Sync</span>
+      </div>
       <div class="user-pill" onclick="signOut()">
         <div class="user-av" id="userAv">?</div>
         <span id="userName">Loading...</span>
@@ -295,34 +298,92 @@ table.t tr:hover td{background:#FAFBFC}
 
     <!-- SUBMIT -->
     <div class="panel active" id="panel-submit">
-      <div class="page-title">Submit an idea</div>
-      <div class="page-sub">Describe any operational problem or improvement — the AI pipeline structures, scores, and routes it automatically.</div>
+      <div class="page-title">SPARK Innovation Pipeline</div>
+      <div class="page-sub">AI-powered idea management for Netzon contact centre operations.</div>
+
+      <!-- MAIN INFO CARD -->
       <div class="card">
-        <div class="card-title" style="margin-bottom:1rem">Your idea</div>
-        <div class="row2">
-          <div class="field"><label>Role</label><select id="role"><option>Agent</option><option>Team Leader</option><option>CDM</option><option>Director</option></select></div>
-          <div class="field"><label>Queue</label><select id="queue"><option>Billing</option><option>Technical Support</option><option>Complaints</option><option>Retentions</option><option>General</option></select></div>
-          <div class="field full"><label>Describe the problem or opportunity</label><textarea id="idea" rows="6" placeholder="What friction or opportunity have you spotted? Write as you would tell a colleague — any language is fine."></textarea></div>
+        <div class="card-title">How SPARK works</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:1.25rem">
+          SPARK automatically receives improvement ideas submitted by Netzon agents and staff via Microsoft Forms.
+          Each idea is processed by a series of AI agents that structure the problem, estimate operational impact,
+          score it for priority, and check for quality. All AI outputs are reviewed and approved by humans before
+          any action is taken. No idea is acted upon without human oversight.
         </div>
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-primary" id="runBtn" onclick="runPipeline()"><span id="runLabel">Run AI pipeline</span></button>
-          <button class="btn btn-ghost" onclick="clearForm()">Clear</button>
-          <span id="costPreview" style="font-size:11px;color:var(--muted2)"></span>
-        </div>
-        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
-          <div style="font-size:11px;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">Example ideas — click to load</div>
-          <div class="samples">
-            <button class="sample" onclick="load('good')"><span class="st st-g">Clear idea</span><span class="sample-text">Knowledge base search takes 2–3 mins per call. Customers on hold while agents scroll irrelevant results.</span></button>
-            <button class="sample" onclick="load('vague')"><span class="st st-v">Vague / emotional</span><span class="sample-text">the system is just rubbish honestly takes forever to do anything its so frustrating every single day</span></button>
-            <button class="sample" onclick="load('offtopic')"><span class="st st-o">Off-topic / HR</span><span class="sample-text">My manager never listens and the rota is unfair. I want to raise a complaint about shift allocation.</span></button>
-            <button class="sample" onclick="load('multilang')"><span class="st st-m">Mixed language</span><span class="sample-text">CRM jest bardzo wolny — sometimes freezes 30 seconds while customer waits. Very bad for everyone.</span></button>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-bottom:1.25rem">
+          <div style="background:var(--tg);border:1px solid var(--tp);border-radius:var(--rs);padding:1rem;text-align:center">
+            <div style="font-size:24px;margin-bottom:.5rem">📝</div>
+            <div style="font-size:13px;font-weight:600;color:var(--teal);margin-bottom:4px">1. Submit</div>
+            <div style="font-size:12px;color:var(--muted)">Agents submit ideas via MS Forms in under 3 minutes</div>
+          </div>
+          <div style="background:var(--tg);border:1px solid var(--tp);border-radius:var(--rs);padding:1rem;text-align:center">
+            <div style="font-size:24px;margin-bottom:.5rem">🤖</div>
+            <div style="font-size:13px;font-weight:600;color:var(--teal);margin-bottom:4px">2. AI processes</div>
+            <div style="font-size:12px;color:var(--muted)">8 AI agents enrich, score, and quality-check the idea automatically</div>
+          </div>
+          <div style="background:var(--tg);border:1px solid var(--tp);border-radius:var(--rs);padding:1rem;text-align:center">
+            <div style="font-size:24px;margin-bottom:.5rem">👥</div>
+            <div style="font-size:13px;font-weight:600;color:var(--teal);margin-bottom:4px">3. Human review</div>
+            <div style="font-size:12px;color:var(--muted)">Innovation Council reviews and approves ideas before any action</div>
           </div>
         </div>
-        <div id="keyStatusBanner" style="display:none;margin-top:.75rem;padding:.75rem 1rem;border-radius:var(--rs);font-size:12px;line-height:1.5"></div>
-        <div style="margin-top:.75rem;padding:.75rem 1rem;background:var(--tg);border:1px solid var(--tp);border-radius:var(--rs)">
-          <div style="font-size:12px;color:var(--teal);line-height:1.55"><strong>In production:</strong> agents submit via MS Forms → Power Automate → SharePoint → SPARK processes automatically. This tab is for CDMs, Directors, and testing.</div>
+        <div style="background:var(--ap);border:1px solid var(--am);border-radius:var(--rs);padding:1rem;margin-bottom:1.25rem">
+          <div style="font-size:13px;color:var(--amber);line-height:1.55">
+            <strong>Human oversight:</strong> SPARK is an AI-assisted tool, not an autonomous decision-maker.
+            Every enrichment, score, and categorisation can be reviewed, overridden, or dismissed by a human reviewer.
+            Quarantined ideas require explicit human release before scoring proceeds.
+            All governance decisions are made by the Innovation Council, not by the AI.
+          </div>
+        </div>
+        <div style="text-align:center;padding:1.25rem;background:var(--tg);border:1px solid var(--tp);border-radius:var(--rs)">
+          <div style="font-size:15px;font-weight:600;color:var(--teal);margin-bottom:.5rem">Ready to submit an idea?</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:1rem">Use the Microsoft Form below — takes under 3 minutes. You will receive a Teams message when your idea has been processed.</div>
+          <a id="formsLink" href="#" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:var(--teal);color:white;padding:10px 24px;border-radius:var(--rs);font-size:14px;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="white" stroke-width="1.5"/><path d="M5 8h6M5 5h6M5 11h4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Submit an idea via MS Forms
+          </a>
         </div>
       </div>
+
+      <!-- IT SUPPORT DIRECT SUBMISSION — hidden behind password -->
+      <div class="card" style="margin-top:1rem;border:1px solid var(--purple);background:var(--pp)">
+        <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="toggleITPanel()">
+          <div>
+            <div class="card-title" style="color:var(--purple)">🔧 IT Support — Direct submission</div>
+            <div class="card-sub">Bypass MS Forms for testing and troubleshooting purposes only</div>
+          </div>
+          <div id="itToggleIcon" style="font-size:18px;color:var(--purple)">▼</div>
+        </div>
+        <div id="itPanel" style="display:none;margin-top:1rem;border-top:1px solid var(--purple);padding-top:1rem">
+          <div id="itAuthArea">
+            <div style="font-size:13px;color:var(--purple);margin-bottom:.75rem">Enter IT support password to access direct submission:</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="password" id="itPassword" placeholder="IT support password" style="max-width:300px" onkeydown="if(event.key==='Enter')checkITPassword()">
+              <button class="btn btn-sm" style="background:var(--purple);color:white" onclick="checkITPassword()">Unlock</button>
+            </div>
+            <div id="itAuthError" style="font-size:12px;color:var(--red);margin-top:6px;display:none">Incorrect password</div>
+          </div>
+          <div id="itSubmitArea" style="display:none">
+            <div style="font-size:12px;color:var(--purple);font-weight:600;margin-bottom:.75rem">⚠ IT SUPPORT USE ONLY — for testing and troubleshooting. All submissions are logged.</div>
+            <div class="row2">
+              <div class="field"><label>Role</label><select id="it-role"><option>Agent</option><option>Team Leader</option><option>CDM</option><option>Director</option><option>IT Support</option></select></div>
+              <div class="field"><label>Queue</label><select id="it-queue"><option>Billing</option><option>Technical Support</option><option>Complaints</option><option>Retentions</option><option>General</option><option>IT Test</option></select></div>
+              <div class="field full"><label>Test idea text</label><textarea id="it-idea" rows="4" placeholder="Enter test idea for pipeline verification..."></textarea></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <button class="btn btn-sm" style="background:var(--purple);color:white" id="itRunBtn" onclick="runITPipeline()"><span id="itRunLabel">Run pipeline (IT test)</span></button>
+              <span style="font-size:11px;color:var(--purple)">Results visible in Pipeline result tab</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="keyStatusBanner" style="display:none;margin-top:.75rem;padding:.75rem 1rem;border-radius:var(--rs);font-size:12px;line-height:1.5"></div>
+    </div>
+    <!-- Hidden fields for IT direct pipeline submission -->
+    <div style="display:none">
+      <select id="role"><option>Agent</option></select>
+      <select id="queue"><option>General</option></select>
+      <textarea id="idea"></textarea>
     </div>
 
     <!-- PIPELINE RESULT -->
@@ -621,9 +682,16 @@ function showApp(){
   document.getElementById('userAv').textContent=currentUser.initials;
   setApi('live','Ready');
   showKeyStatus();
-  refreshAgents();
-  refreshClusteringBanner();
-  refreshGovPackBanner();
+  // Load from SharePoint if in production mode, then start polling
+  loadFromSharePoint().then(()=>{
+    refreshAgents();
+    refreshClusteringBanner();
+    refreshGovPackBanner();
+    // Poll SharePoint every 60 seconds for new ideas
+    if(CONFIG.spSiteUrl && !CONFIG.DEMO_MODE){
+      setInterval(loadFromSharePoint, 60000);
+    }
+  });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -657,6 +725,216 @@ async function callAI(system,user,retries=3){
   }
 }
 async function getAuthToken(){if(!msalInstance)return'';const accs=msalInstance.getAllAccounts();const r=await msalInstance.acquireTokenSilent({scopes:['Sites.ReadWrite.All'],account:accs[0]});return r.accessToken;}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SHAREPOINT API LAYER
+// ─────────────────────────────────────────────────────────────────────────────
+async function spGet(list, filter='', orderby='', top=500) {
+  if(!CONFIG.spSiteUrl) return [];
+  const token = await getAuthToken();
+  let url = `${CONFIG.spSiteUrl}/_api/web/lists/getbytitle('${list}')/items?$top=${top}`;
+  if(filter)  url += `&$filter=${encodeURIComponent(filter)}`;
+  if(orderby) url += `&$orderby=${encodeURIComponent(orderby)}`;
+  const res = await fetch(url, {headers:{'Authorization':`Bearer ${token}`,'Accept':'application/json;odata=nometadata'}});
+  if(!res.ok) return [];
+  const d = await res.json();
+  return d.value || [];
+}
+
+async function spCreate(list, item) {
+  if(!CONFIG.spSiteUrl) return null;
+  const token = await getAuthToken();
+  const url = `${CONFIG.spSiteUrl}/_api/web/lists/getbytitle('${list}')/items`;
+  const res = await fetch(url, {
+    method:'POST',
+    headers:{'Authorization':`Bearer ${token}`,'Accept':'application/json;odata=nometadata','Content-Type':'application/json;odata=nometadata'},
+    body: JSON.stringify(item)
+  });
+  if(!res.ok) return null;
+  return await res.json();
+}
+
+async function spUpdate(list, id, item) {
+  if(!CONFIG.spSiteUrl) return;
+  const token = await getAuthToken();
+  const url = `${CONFIG.spSiteUrl}/_api/web/lists/getbytitle('${list}')/items(${id})`;
+  await fetch(url, {
+    method:'PATCH',
+    headers:{'Authorization':`Bearer ${token}`,'Accept':'application/json;odata=nometadata','Content-Type':'application/json;odata=nometadata','IF-MATCH':'*'},
+    body: JSON.stringify(item)
+  });
+}
+
+// Load all data from SharePoint into memory
+async function loadFromSharePoint() {
+  if(!CONFIG.spSiteUrl || CONFIG.DEMO_MODE) return;
+  setApi('busy','Loading from SharePoint…');
+  try {
+    // Load Ideas
+    const spIdeas = await spGet('Ideas','','Created desc',500);
+    ideas = spIdeas.map(i=>({
+      id:         i.Title || ('SPK-'+i.ID),
+      spId:       i.ID,
+      text:       i.RawIdea||'',
+      role:       i.SubmitterRole||'Agent',
+      queue:      'General',
+      user:       i.SubmittedBy?.Title||i.SubmittedByEmail||'Unknown',
+      email:      i.SubmittedBy?.EMail||i.SubmittedByEmail||'',
+      ts:         new Date(i.Created),
+      dec:        i.Status==='Approved'?'approved':i.Status==='Rejected'?'rejected':i.Status==='Parked'?'parked':null,
+      quarantined:i.Status==='Quarantined',
+      isExc:      (i.FinalScore||0)>20,
+      costGBP:    0,
+      spStatus:   i.Status,
+      enriched: i.EnrichedProblem ? {
+        problem_statement:  i.EnrichedProblem,
+        root_cause:         i.RootCause||'',
+        category:           i.Category||'process',
+        aht_impact_minutes: i.EstimatedAHTImpact||null,
+        csat_impact:        'unknown',
+        affected_teams:     '',
+        solution_options:   [],
+        impact:             0,
+        effort:             0,
+        confidence:         0,
+        final_score:        i.FinalScore||null,
+        score_rationale:    '',
+        confidence_score:   i.QAQuality||'MEDIUM',
+        needs_clarification:false,
+        clarification_question:null,
+        likely_widespread:  false,
+        language_detected:  'English',
+        flag_for_human_review:false,
+        review_note:        null,
+        redirect_message:   null,
+        rationale:          ''
+      } : null,
+      qaResult: i.QAQuality ? {flags:[],overall_quality:i.QAQuality,quality_note:''} : null,
+      so: null
+    }));
+
+    // Load QA Flags
+    const spFlags = await spGet('QAFlags','','Created desc',200);
+    qaFlags = spFlags.map(f=>({
+      ideaId:    f.IdeaID||'',
+      flag_type: f.FlagType||'UNKNOWN',
+      severity:  f.Severity||'LOW',
+      description:f.Description||'',
+      recommendation:f.Recommendation||'',
+      ts:        new Date(f.Created),
+      resolved:  f.Resolved||false,
+      resolution:f.Resolution||null,
+      resolvedBy:f.ResolvedBy||null,
+      spId:      f.ID,
+      quarantine:f.IsQuarantine||false
+    }));
+
+    // Load Cost Log
+    const spCosts = await spGet('CostLog','','Created desc',500);
+    costLog = spCosts.map(c=>({
+      stage:    c.Stage||'unknown',
+      inputTok: c.InputTokens||0,
+      outputTok:c.OutputTokens||0,
+      costGBP:  c.CostGBP||0,
+      email:    c.UserEmail||'',
+      ts:       new Date(c.Created)
+    }));
+
+    // Load Pilots
+    const spPilots = await spGet('Pilots','','Created desc',100);
+    pilots = spPilots.map(p=>({
+      ideaId:      p.IdeaID||'',
+      spId:        p.ID,
+      completed:   p.Completed||false,
+      isPlaceholder:true,
+      plan:{
+        pilot_name:             p.PilotName||'Pilot',
+        hypothesis:             p.Hypothesis||'',
+        primary_metric:         p.PrimaryMetric||'AHT',
+        success_threshold:      p.SuccessThreshold||'10% improvement',
+        recommended_duration_weeks:p.DurationWeeks||4,
+        test_group:             p.TestGroup||'',
+        control_group:          p.ControlGroup||'',
+        ab_test_possible:       true,
+        measurement_method:     p.MeasurementMethod||'',
+        risks:                  [],
+        go_criteria:            p.GoCriteria||'',
+        no_go_criteria:         p.NoGoCriteria||''
+      },
+      outcome: p.AHTDelta!=null?{ahtDelta:p.AHTDelta,csatDelta:p.CSATDelta||0,decision:p.Decision||'Go'}:null,
+      ts: new Date(p.Created)
+    }));
+
+    setApi('live','Ready');
+    refreshAll();
+  } catch(e) {
+    console.error('SharePoint load error:', e);
+    setApi('live','Ready');
+  }
+}
+
+// Write governance decision to SharePoint
+async function writeDecisionToSP(ideaSpId, decision) {
+  if(!CONFIG.spSiteUrl || !ideaSpId) return;
+  const statusMap = {approved:'Approved', parked:'Parked', rejected:'Rejected'};
+  await spUpdate('Ideas', ideaSpId, {Status: statusMap[decision]||decision});
+}
+
+// Write pilot to SharePoint
+async function writePilotToSP(ideaId, plan) {
+  if(!CONFIG.spSiteUrl) return;
+  const result = await spCreate('Pilots', {
+    IdeaID:           ideaId,
+    PilotName:        plan.pilot_name||'',
+    Hypothesis:       plan.hypothesis||'',
+    PrimaryMetric:    plan.primary_metric||'',
+    SuccessThreshold: plan.success_threshold||'',
+    DurationWeeks:    plan.recommended_duration_weeks||4,
+    TestGroup:        plan.test_group||'',
+    ControlGroup:     plan.control_group||'',
+    GoCriteria:       plan.go_criteria||'',
+    NoGoCriteria:     plan.no_go_criteria||'',
+    Completed:        false
+  });
+  return result;
+}
+
+// Write cost log to SharePoint
+async function writeCostToSP(stage, inputTok, outputTok, costGBP, email) {
+  if(!CONFIG.spSiteUrl) return;
+  await spCreate('CostLog', {
+    Stage:       stage,
+    InputTokens: inputTok,
+    OutputTokens:outputTok,
+    CostGBP:     costGBP,
+    UserEmail:   email
+  });
+}
+
+// Write QA flag to SharePoint
+async function writeQAFlagToSP(ideaId, flag) {
+  if(!CONFIG.spSiteUrl) return;
+  await spCreate('QAFlags', {
+    IdeaID:        ideaId,
+    FlagType:      flag.flag_type,
+    Severity:      flag.severity,
+    Description:   flag.description,
+    Recommendation:flag.recommendation,
+    Resolved:      false,
+    IsQuarantine:  flag.quarantine||false
+  });
+}
+
+// Write pilot outcome to SharePoint
+async function writePilotOutcomeToSP(pilotSpId, outcome) {
+  if(!CONFIG.spSiteUrl || !pilotSpId) return;
+  await spUpdate('Pilots', pilotSpId, {
+    Completed: true,
+    AHTDelta:  outcome.ahtDelta,
+    CSATDelta: outcome.csatDelta,
+    Decision:  outcome.decision
+  });
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PIPELINE
@@ -744,7 +1022,11 @@ async function runPipeline(){
     const idea={id,text,role,queue,enriched,qaResult,so,isExc,ts:new Date(),dec:null,user:currentUser?.name||'Demo',email:currentUser?.email||'demo@netzon.com',costGBP:calcCostGBP(totalIn,totalOut),quarantined:false};
     ideas.push(idea);
 
-    if(qaResult.flags?.length>0)qaResult.flags.forEach(f=>qaFlags.push({...f,ideaId:id,ts:new Date(),resolved:false,resolvedBy:null,quarantine:false}));
+    if(qaResult.flags?.length>0)qaResult.flags.forEach(f=>{
+      const flag={...f,ideaId:id,ts:new Date(),resolved:false,resolvedBy:null,quarantine:false};
+      qaFlags.push(flag);
+      writeQAFlagToSP(id, flag);
+    });
 
     renderResult(idea);refreshAll();setApi('live','Ready');
   }catch(err){
@@ -961,11 +1243,17 @@ async function generatePilotPlan(ideaId){
   setApi('live','Ready');
 }
 
-function renderPilotCard(ideaId,plan,isPlaceholder){
+async function renderPilotCard(ideaId,plan,isPlaceholder){
   const idea=ideas.find(i=>i.id===ideaId);
   const existing=pilots.find(p=>p.ideaId===ideaId);
   if(existing){existing.plan=plan;existing.isPlaceholder=isPlaceholder;}
-  else pilots.push({ideaId,plan,isPlaceholder,completed:false,outcome:null,ts:new Date()});
+  else {
+    const pilot={ideaId,plan,isPlaceholder,completed:false,outcome:null,ts:new Date()};
+    // Write to SharePoint Pilots list
+    const spResult = await writePilotToSP(ideaId, plan);
+    if(spResult) pilot.spId = spResult.ID;
+    pilots.push(pilot);
+  }
   go('pilots');refreshPilots();refreshAgents();
 }
 
@@ -1082,6 +1370,8 @@ function refreshGov(){
 function decide(id,dec){
   const idea=ideas.find(i=>i.id===id);if(!idea)return;
   idea.dec=dec;
+  // Write decision to SharePoint
+  if(idea.spId) writeDecisionToSP(idea.spId, dec);
   if(dec==='approved'){generatePilotPlan(id);}
   else{refreshGov();refreshAgents();}
 }
@@ -1172,6 +1462,8 @@ function completePilot(ideaId){
   const csat=parseFloat(document.getElementById('csat-'+ideaId)?.value)||0;
   const dec=document.getElementById('dec-'+ideaId)?.value||'Go';
   p.completed=true;p.outcome={ahtDelta:aht,csatDelta:csat,decision:dec,ts:new Date()};
+  // Write outcome to SharePoint
+  if(p.spId) writePilotOutcomeToSP(p.spId, p.outcome);
   refreshPilots();refreshAgents();
 }
 
@@ -1251,13 +1543,25 @@ function refreshQuality(){
   </div>`).join('');
 }
 
-function resolveFlag(idx,res){qaFlags[idx].resolved=true;qaFlags[idx].resolution=res;qaFlags[idx].resolvedBy=currentUser?.name||'Demo';refreshQuality();}
+function resolveFlag(idx,res){
+  qaFlags[idx].resolved=true;
+  qaFlags[idx].resolution=res;
+  qaFlags[idx].resolvedBy=currentUser?.name||'Demo';
+  // Write resolution to SharePoint
+  if(qaFlags[idx].spId) spUpdate('QAFlags', qaFlags[idx].spId, {Resolved:true, Resolution:res, ResolvedBy:currentUser?.name||''});
+  refreshQuality();
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // COST
 // ─────────────────────────────────────────────────────────────────────────────
 function calcCostGBP(i,o){return((i/1000000)*CONFIG.inputPricePer1M+(o/1000000)*CONFIG.outputPricePer1M)*CONFIG.GBP_USD;}
-function logCost(stage,i,o,email){costLog.push({stage,inputTok:i,outputTok:o,costGBP:calcCostGBP(i,o),email,ts:new Date()});}
+function logCost(stage,i,o,email){
+  const entry={stage,inputTok:i,outputTok:o,costGBP:calcCostGBP(i,o),email,ts:new Date()};
+  costLog.push(entry);
+  // Write to SharePoint CostLog list
+  writeCostToSP(stage,i,o,entry.costGBP,email);
+}
 function estimateCost(t){const w=t.split(/\s+/).length;const tok=w*1.3*4;const usd=(tok/1e6)*CONFIG.inputPricePer1M+(tok*0.5/1e6)*CONFIG.outputPricePer1M;return`~£${(usd*CONFIG.GBP_USD).toFixed(4)}`;}
 
 function refreshCost(){
@@ -1319,8 +1623,71 @@ function showKeyStatus(){
 }
 function clearDemoKey(){sessionStorage.removeItem('spark_demo_key');showKeyStatus();}
 
+// ─────────────────────────────────────────────────────────────────────────────
+// IT SUPPORT PANEL
+// ─────────────────────────────────────────────────────────────────────────────
+// IT support password — change this to your own secure value before deploying
+const IT_PASSWORD = 'spark-it-2025';
+
+// MS Forms URL — update this with your actual form URL
+const FORMS_URL = 'https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=6r_8lowJiEqH-HPgvWcUFcm0o4qEJPhFhqNxzyHejkBUNlpRVkpaUDc4SEYwWUFFVlFXTTFERUlXVS4u';
+
+function toggleITPanel() {
+  const panel = document.getElementById('itPanel');
+  const icon  = document.getElementById('itToggleIcon');
+  if (panel.style.display === 'none') {
+    panel.style.display = 'block';
+    icon.textContent = '▲';
+  } else {
+    panel.style.display = 'none';
+    icon.textContent = '▼';
+  }
+}
+
+function checkITPassword() {
+  const entered = document.getElementById('itPassword').value;
+  const errEl   = document.getElementById('itAuthError');
+  if (entered === IT_PASSWORD) {
+    document.getElementById('itAuthArea').style.display  = 'none';
+    document.getElementById('itSubmitArea').style.display = 'block';
+    errEl.style.display = 'none';
+  } else {
+    errEl.style.display = 'block';
+  }
+}
+
+async function runITPipeline() {
+  const text  = document.getElementById('it-idea').value.trim();
+  if (!text) { alert('Please enter a test idea.'); return; }
+  const role  = document.getElementById('it-role').value;
+  const queue = document.getElementById('it-queue').value;
+  const btn   = document.getElementById('itRunBtn');
+  const lbl   = document.getElementById('itRunLabel');
+  btn.disabled = true;
+  lbl.innerHTML = '<span class="spin spin-w"></span> Running…';
+
+  // Temporarily set values for the main pipeline to use
+  document.getElementById('role').value  = role;
+  document.getElementById('queue').value = queue;
+  document.getElementById('idea').value  = text;
+
+  // Run the standard pipeline
+  await runPipeline();
+
+  btn.disabled = false;
+  lbl.textContent = 'Run pipeline (IT test)';
+}
+
 // Boot
 initAuth();
+
+// Set the Forms link URL
+document.addEventListener('DOMContentLoaded', () => {
+  const link = document.getElementById('formsLink');
+  if (link) link.href = FORMS_URL;
+  const ideaEl = document.getElementById('idea');
+  if (ideaEl) ideaEl.addEventListener('input', updateCostPreview);
+});
 document.addEventListener('DOMContentLoaded',()=>{const el=document.getElementById('idea');if(el)el.addEventListener('input',updateCostPreview);});
 </script>
 </body>
