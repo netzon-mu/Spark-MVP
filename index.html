@@ -671,7 +671,7 @@ async function initAuth(){
   else{const accs=msalInstance.getAllAccounts();if(accs.length>0){currentUser=extractUser(accs[0]);showApp();}}
 }
 function extractUser(a){const name=a.name||a.username.split('@')[0];const email=a.username;const p=name.split(' ');return{name,email,initials:(p.length>1?p[0][0]+p[p.length-1][0]:name.slice(0,2)).toUpperCase()};}
-async function signIn(){if(CONFIG.DEMO_MODE){initAuth();return;}await msalInstance.loginRedirect({scopes:['User.Read','Sites.ReadWrite.All']});}
+async function signIn(){if(CONFIG.DEMO_MODE){initAuth();return;}await msalInstance.loginRedirect({scopes:['User.Read','https://eunetzongroup.sharepoint.com/AllSites.Write']});}
 function signOut(){if(CONFIG.DEMO_MODE){location.reload();return;}msalInstance.logoutRedirect();}
 function showApp(){
   document.getElementById('authScreen').style.display='none';
@@ -725,7 +725,7 @@ async function callAI(system,user,retries=3){
     }catch(e){if(attempt===retries-1)throw e;await sleep((attempt+1)*3000);}
   }
 }
-async function getAuthToken(){if(!msalInstance)return'';const accs=msalInstance.getAllAccounts();const r=await msalInstance.acquireTokenSilent({scopes:['Sites.ReadWrite.All'],account:accs[0]});return r.accessToken;}
+async function getAuthToken(){if(!msalInstance)return'';const accs=msalInstance.getAllAccounts();const r=await msalInstance.acquireTokenSilent({scopes:['https://eunetzongroup.sharepoint.com/AllSites.Write'],account:accs[0]});return r.accessToken;}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SHAREPOINT API LAYER
