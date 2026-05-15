@@ -250,9 +250,7 @@ table.t tr:hover td{background:#FAFBFC}
     </div>
     <div class="topbar-right">
       <div class="api-pill"><div class="api-dot" id="apiDot"></div><span id="apiLabel">Ready</span></div>
-      <div class="api-pill" style="cursor:pointer" onclick="loadFromSharePoint()" title="Refresh from SharePoint">
-        <span style="font-size:11px">⟳ Sync</span>
-      </div>
+
       <div class="user-pill" onclick="signOut()">
         <div class="user-av" id="userAv">?</div>
         <span id="userName">Loading...</span>
@@ -682,16 +680,19 @@ function showApp(){
   document.getElementById('userAv').textContent=currentUser.initials;
   setApi('live','Ready');
   showKeyStatus();
-  // Load from SharePoint if in production mode, then start polling
-  loadFromSharePoint().then(()=>{
+  // Load from SharePoint if SP URL is configured, then poll every 60s
+  if(CONFIG.spSiteUrl){
+    loadFromSharePoint().then(()=>{
+      refreshAgents();
+      refreshClusteringBanner();
+      refreshGovPackBanner();
+      setInterval(loadFromSharePoint, 60000);
+    });
+  } else {
     refreshAgents();
     refreshClusteringBanner();
     refreshGovPackBanner();
-    // Poll SharePoint every 60 seconds for new ideas
-    if(CONFIG.spSiteUrl && !CONFIG.DEMO_MODE){
-      setInterval(loadFromSharePoint, 60000);
-    }
-  });
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -767,7 +768,8 @@ async function spUpdate(list, id, item) {
 
 // Load all data from SharePoint into memory
 async function loadFromSharePoint() {
-  if(!CONFIG.spSiteUrl || CONFIG.DEMO_MODE) return;
+  // Load from SP if we have the site URL — even in demo mode if SP URL is configured
+  if(!CONFIG.spSiteUrl) return;
   setApi('busy','Loading from SharePoint…');
   try {
     // Load Ideas
