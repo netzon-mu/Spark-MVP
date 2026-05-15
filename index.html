@@ -475,17 +475,17 @@ table.t tr:hover td{background:#FAFBFC}
 // CONFIG
 // ─────────────────────────────────────────────────────────────────────────────
 const CONFIG = {
-  tenantId:    window.ENV_TENANT_ID    || 'DEMO_MODE',
-  clientId:    window.ENV_CLIENT_ID    || 'DEMO_MODE',
-  functionUrl: window.ENV_FUNCTION_URL || null,
-  spSiteUrl:   window.ENV_SP_SITE_URL  || null,
-  aoaiEndpoint:   window.ENV_AOAI_ENDPOINT   || null,
+  tenantId:    '96fcbfea-098c-4a88-87f8-73e0bd671415',
+  clientId:    '1bc1e3aa-e665-4df6-8dfa-896970335160',
+  functionUrl: 'https://spark-proxy-dqeba6enbhc9adfp.westeurope-01.azurewebsites.net/api/ai',
+  spSiteUrl:   'https://eunetzongroup.sharepoint.com/sites/InnovationHub',
+  aoaiEndpoint:   'https://aoai-spark-mvp.openai.azure.com',
   aoaiDeployment: window.ENV_AOAI_DEPLOYMENT || 'gpt-4o-spark',
   aoaiApiVersion: '2024-02-15-preview',
   inputPricePer1M:  5.00,
   outputPricePer1M: 15.00,
   GBP_USD: 0.79,
-  DEMO_MODE: !window.ENV_TENANT_ID,
+  DEMO_MODE: false,
   AI_PROVIDER: 'azure_openai',
   LOCAL_API_KEY: window.ENV_LOCAL_API_KEY || null,
   // Activation thresholds
