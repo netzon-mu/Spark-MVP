@@ -1,0 +1,5 @@
+{
+  "globalHeaders": {
+    "content-security-policy": "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://login.microsoftonline.com https://graph.microsoft.com https://*.sharepoint.com https://api.anthropic.com https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net"
+  }
+}
